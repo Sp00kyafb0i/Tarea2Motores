@@ -1,9 +1,7 @@
 #pragma once
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
-#include <unordered_map>
 #include <string>
-#include <sstream>
 #include <filesystem>
 #include <nlohmann/json.hpp>
 #include "Log.hpp"
@@ -41,7 +39,7 @@ namespace Mona {
 
 		bool m_loaded = false;
 		void loadDirectories();
-		void readFile(const std::string& path);
+		bool readConfigurationFile(const std::filesystem::path& path);
 
 		/* these values are set with the executable path, cannot be changed. */
 		std::filesystem::path m_executablePath;

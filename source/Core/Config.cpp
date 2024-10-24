@@ -21,10 +21,21 @@ namespace Mona
 		m_configurations["expected_number_of_gameobjects"] = 1200;
 	}
 
-	void Config::readFile(const std::string& path)
+	bool Config::readConfigurationFile(const std::filesystem::path& path)
 	{
-		std::ifstream file(path);
-		file >> m_configurations;
+		if (not std::filesystem::is_regular_file(path))
+			return false;
+
+		try
+		{
+			std::ifstream file(path);
+			file >> m_configurations;
+			return true;
+		}
+		catch (auto& e)
+		{
+			return false;
+		}
 	}
 
 	void Config::loadDirectories()
@@ -41,10 +52,8 @@ namespace Mona
 		/* The configuration file allow us to specify asset folders for the application and for the engine.
 		   Those paths must be absolute, this is meant to help development only.
 		 */
-		if (std::filesystem::is_regular_file(m_configurationFile))
+		if (readConfigurationFile(m_configurationFile))
 		{
-			readFile(m_configurationFile.string());
-
 			std::string applicationAssetsDirStr = getValueOrDefault<std::string>("application_assets_dir", "X");
 			if (applicationAssetsDirStr == "X")
 			{
@@ -71,7 +80,7 @@ namespace Mona
 		}
 		else
 		{
-			MONA_LOG_INFO("There is no configuration file \"config.json\" next to the executable. Using defaults.");
+			MONA_LOG_INFO("There is no valid configuration file \"config.json\" next to the executable. Using defaults.");
 
 			loadDefault();
 
