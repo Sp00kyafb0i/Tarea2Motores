@@ -11,55 +11,20 @@ namespace Mona
 		m_configurations["windowTitle"] = "MonaEngine Application";
 
 		// OpenGL Settings
-		m_configurations["OpenGL_major_version"] = "4";
-		m_configurations["OpenGL_minor_version"] = "5";
+		m_configurations["OpenGL_major_version"] = 4;
+		m_configurations["OpenGL_minor_version"] = 5;
 
 		// Audio Setting
-		m_configurations["N_OPENAL_SOURCES"] = "32";
+		m_configurations["N_OPENAL_SOURCES"] = 32;
 
 		// Game Object Settings
-		m_configurations["expected_number_of_gameobjects"] = "1200";
+		m_configurations["expected_number_of_gameobjects"] = 1200;
 	}
 
 	void Config::readFile(const std::string& path)
 	{
-		std::ifstream in(path);
-		if(in.is_open())
-		{
-			std::string line;
-			std::string::size_type lineNumber = 0;
-			const std::string chars = "\t\n\v\f\r ";
-			while (std::getline(in, line))
-			{
-				if (line.empty() || line[0] == '#' || line.find_first_not_of(chars) == std::string::npos)
-					continue;
-				auto delimeterPos = line.find_first_of("=");
-				if (delimeterPos == 0 || delimeterPos == std::string::npos)
-				{
-					MONA_LOG_ERROR("Configuration: Incorrect line format (Line = {0}, Content = \"{1}\")", lineNumber, line);
-					continue;
-				}
-				
-				auto keyStart = line.find_first_not_of(chars);
-				auto keyEnd = line.find_last_not_of(chars, delimeterPos-1);
-				auto valueStart = line.find_first_not_of(chars, delimeterPos + 1);
-				auto valueEnd = line.find_last_not_of(chars);
-				
-				if (keyStart == delimeterPos || (keyEnd - keyStart) < 0 || (valueEnd - valueStart) < 0)
-				{
-					MONA_LOG_ERROR("Configuration: Incorrect line format (Line = {0}, Content = \"{1}\")", lineNumber, line);
-					continue;
-				}
-				m_configurations[line.substr(keyStart, keyEnd - keyStart + 1)] = line.substr(valueStart, valueEnd -  valueStart +1);
-			}
-			
-		}
-		else
-		{
-			MONA_LOG_ERROR("Configuration: Failed to open file {0}", path);
-		}
-		
-		return;
+		std::ifstream file(path);
+		file >> m_configurations;
 	}
 
 	void Config::loadDirectories()
@@ -71,7 +36,7 @@ namespace Mona
 		m_executableDir = m_executablePath.parent_path();
 
 		m_configurationFile = m_executableDir;
-		m_configurationFile.append("config.cfg");
+		m_configurationFile.append("config.json");
 
 		/* The configuration file allow us to specify asset folders for the application and for the engine.
 		   Those paths must be absolute, this is meant to help development only.
@@ -106,7 +71,7 @@ namespace Mona
 		}
 		else
 		{
-			MONA_LOG_INFO("There is no configuration file \"config.cfg\" next to the executable. Using defaults.");
+			MONA_LOG_INFO("There is no configuration file \"config.json\" next to the executable. Using defaults.");
 
 			loadDefault();
 

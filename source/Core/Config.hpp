@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <filesystem>
+#include <nlohmann/json.hpp>
 #include "Log.hpp"
 
 namespace Mona {
@@ -24,18 +25,9 @@ namespace Mona {
 		template <typename T>
 		inline T getValueOrDefault(const std::string& key, const T& defaultValue) const noexcept
 		{
-			auto it = m_configurations.find(key);
-			if (it != m_configurations.end())
-			{
-				std::istringstream istr(it->second);
-				T returnValue;
-				if (!(istr >> returnValue))
-				{
-					MONA_LOG_ERROR("Configuration: Failed to transform {0}'s value from {1} into an {2}", it->first, it->second, typeid(T).name());
-					return defaultValue;
-				}
-				return returnValue;
-			}
+			if (m_configurations.contains(key))
+				return m_configurations[key];
+
 			return defaultValue;
 		}
 
@@ -45,7 +37,7 @@ namespace Mona {
 
 	private:
 		Config() noexcept {}
-		std::unordered_map<std::string, std::string> m_configurations;
+		nlohmann::json m_configurations;
 
 		bool m_loaded = false;
 		void loadDirectories();
@@ -61,18 +53,7 @@ namespace Mona {
 		/* extratced from the configuration file. */
 		std::filesystem::path m_applicationAssetsDir;
 		std::filesystem::path m_engineAssetsDir;
-	};
-
-	template <>
-	inline std::string Config::getValueOrDefault(const std::string& key, const std::string& defaultValue) const noexcept
-	{
-		auto it = m_configurations.find(key);
-		if (it != m_configurations.end()) {
-			return it->second;
-		}
-		return defaultValue;
-	}
-	
+	};	
 }
 
 
