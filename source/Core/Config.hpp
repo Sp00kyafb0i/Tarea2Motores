@@ -15,6 +15,7 @@ namespace Mona {
 		static Config& GetInstance()
 		{
 			static Config instance;
+			instance.loadDirectories();
 			return instance;
 		}
 

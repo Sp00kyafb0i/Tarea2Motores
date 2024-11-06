@@ -43,7 +43,7 @@ add_subdirectory(thirdParty)
 add_subdirectory(source)
 add_subdirectory(tests)
 
-option(MONA_BUILD_EXAMPLES "Build the examples?" ON)
+option(MONA_BUILD_EXAMPLES "Build the examples?" OFF)
 if (MONA_BUILD_EXAMPLES)
 	add_subdirectory(examples)
 endif()
