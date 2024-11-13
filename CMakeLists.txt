@@ -76,6 +76,7 @@ if (${MONA_BUILD_EXAMPLES})
 		Example4_IKBasic
 		Example5_IKMultipleTerrains
 		Example6_IKMultipleCharacters
+		Tarea2
 
 		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 			COMPONENT MonaEngineExamples_Runtime
